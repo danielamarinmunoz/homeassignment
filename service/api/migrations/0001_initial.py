@@ -45,4 +45,12 @@ class Migration(migrations.Migration):
                 ('moods', models.ManyToManyField(related_name='mood', to='api.Mood')),
             ],
         ),
+        migrations.CreateModel(
+            name='Playlist',
+            fields=[
+                ('id', models.CharField(max_length=10, primary_key=True, serialize=False)),
+                ('name', models.CharField(max_length=200)),
+                ('track', models.ManyToManyField(related_name='track', to='api.Track')),
+            ],
+        ),
     ]

@@ -22,7 +22,6 @@ class Mood(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-
 class Track(models.Model):
     id = models.CharField(primary_key=True, max_length=10)
     title = models.CharField(max_length=200, null=False)
@@ -48,3 +47,11 @@ class Track(models.Model):
     @property
     def spotify(self):
         return "{}{}/{}".format(settings.DSP_BASE, self.id, "spotify")
+
+class Playlist(models.Model):
+    id = models.CharField(primary_key=True, max_length=10)
+    name = models.CharField(max_length=200, null=False)
+    track = models.ManyToManyField(Track, related_name="track")
+
+    def __str__(self):
+        return f"{self.name}"
