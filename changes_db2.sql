@@ -1,3 +1,6 @@
+-- Table: public.api_track
+
+-- DROP TABLE IF EXISTS public.api_track;
 -- Table: public.api_playlist
 
 DROP TABLE IF EXISTS public.api_playlist;
@@ -15,13 +18,40 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.api_playlist
     OWNER to "user";
 
+DROP TABLE IF EXISTS public.api_playlisttrack;
+
+CREATE TABLE IF NOT EXISTS public.api_playlisttrack
+(
+	id character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    track_id character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    playlist_id character varying(10) COLLATE pg_catalog."default" NOT NULL,
+	CONSTRAINT api_playlisttrack_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_api_playlist_track_api_track_track_id FOREIGN KEY (track_id)
+        REFERENCES public.api_track (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT fk_api_playlist_track_api_playlist_playlist_id FOREIGN KEY (playlist_id)
+        REFERENCES public.api_playlist (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        DEFERRABLE INITIALLY DEFERRED
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.api_playlisttrack
+    OWNER to "user";
+	
+	
 DROP TABLE IF EXISTS public.api_playlist_track;
 
 CREATE TABLE IF NOT EXISTS public.api_playlist_track
 (
+	id character varying(10) COLLATE pg_catalog."default" NOT NULL,
     track_id character varying(10) COLLATE pg_catalog."default" NOT NULL,
     playlist_id character varying(10) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT api_playlist_track_pk PRIMARY KEY (track_id, playlist_id), 
+	CONSTRAINT api_playlist_track_pkey PRIMARY KEY (id),
     CONSTRAINT fk_api_playlist_track_api_track_track_id FOREIGN KEY (track_id)
         REFERENCES public.api_track (id) MATCH SIMPLE
         ON UPDATE NO ACTION
