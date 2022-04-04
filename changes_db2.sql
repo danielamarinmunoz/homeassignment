@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS public.api_playlisttrack
 	id character varying(10) COLLATE pg_catalog."default" NOT NULL,
     track_id character varying(10) COLLATE pg_catalog."default" NOT NULL,
     playlist_id character varying(10) COLLATE pg_catalog."default" NOT NULL,
-	CONSTRAINT api_playlisttrack_pkey PRIMARY KEY (id),
     CONSTRAINT fk_api_playlist_track_api_track_track_id FOREIGN KEY (track_id)
         REFERENCES public.api_track (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -51,7 +50,6 @@ CREATE TABLE IF NOT EXISTS public.api_playlist_track
 	id character varying(10) COLLATE pg_catalog."default" NOT NULL,
     track_id character varying(10) COLLATE pg_catalog."default" NOT NULL,
     playlist_id character varying(10) COLLATE pg_catalog."default" NOT NULL,
-	CONSTRAINT api_playlist_track_pkey PRIMARY KEY (id),
     CONSTRAINT fk_api_playlist_track_api_track_track_id FOREIGN KEY (track_id)
         REFERENCES public.api_track (id) MATCH SIMPLE
         ON UPDATE NO ACTION
