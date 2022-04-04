@@ -3,54 +3,84 @@ import TrackRow from "../components/TrackRow";
 import AudioPlayer from "../components/AudioPlayer";
 
 const SecondTab = () => {
-  const [playlists, setPlaylists] = useState([]);
-  const [currentTrack, setCurrentTrack] = useState();
-  const [counter, setCounter] = useState(0);
-
+  const[playlists, setPlaylists] = useState([]);
+  const[currentTrack, setCurrentTrack] = useState();
+  const[counter, setCounter] = useState(0);
+  const[namePlaylist, setNamePlaylist] = useState('');
+  const[tracks, setNameTracks] = useState([]);
   const handlePlay = (track) => setCurrentTrack(track);
 
   const deletePlaylist = (playlist) => {  
-    debugger;
     fetch('http://localhost:8000/delete/' + playlist.id, {
       method: 'DELETE',
     })
-    .then(res => res.json())  
-    .then(res => console.log(res))
+    .then(response =>  {
+       loadPLaylist();
+       if(response) {
+        response.text();
+      }
+    })  
+    .then(response => console.log(response))
   };
-  const handleClick = () => {
+
+  const handleClickAddTRack = () => {
     setCounter(counter + 1); 
   };
 
-  useEffect(() => {
+  const loadPLaylist = () => { 
     fetch("http://localhost:8000/playlist")
       .then((res) => res.json())
-      .then((data) => setPlaylists(data));
+      .then((data) => setPlaylists(data)); 
+  }
+
+  useEffect(() => {
+    loadPLaylist();
   }, []);
+
+  const trackWithIds  = (array) => { 
+      return array.map(item => {
+        return { name: item, id: Math.random().toString(36).slice(2).substr(0, 10)};
+      })
+  }
+
+  const handleSubmission = (e) => { 
+    let data = {
+      name: namePlaylist,
+      id: Math.random().toString(36).slice(2).substr(0, 10), 
+      track: trackWithIds(tracks)
+    }
+    
+    fetch('http://localhost:8000/create', {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {"Content-type": "application/json; charset=UTF-8"}
+    })
+    .then(response => { 
+      loadPLaylist();
+      if(response) {
+        response.text();
+      }
+    }) 
+    .then(json => console.log(json))
+    .catch(err => console.log(err));
+  }
 
   return (
     <div className="SecondTab">
-      <form action="/create" method="post">
+      <form>
         <ul>
           <li>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="user_name" />
+            <label for="name">Name Playlist:</label>
+            <input type="text" id="name" name="user_name" onChange={e => {setNamePlaylist(e.target.value)}} />
           </li>
           <li>
-            <label for="mail">E-mail:</label>
-            <input type="email" id="mail" name="user_email" />
-          </li>
-          <li>
-            <label for="msg">Message:</label>
-            <textarea id="msg" name="user_message"></textarea>
-          </li>
-          <li>
-            <button type="button" onClick={handleClick}>Hello</button>
+            <button type="button" onClick={handleClickAddTRack}>Add track</button>
             {Array.from(Array(counter)).map((c, index) => {
-              return <input key={c} type="text"></input>;
+              return <input key={c} type="text" onBlur={e => { setNameTracks(tracks => [...tracks, e.target.value])}} ></input>;
             })}
           </li>
         </ul>
-        <button type="submit"  value="Submit">Create</button>
+        <button type="button" onClick={handleSubmission} >Create</button>
       </form>
       {playlists.map((playlist, ix) => (
            <div> 

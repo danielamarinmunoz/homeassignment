@@ -43,14 +43,21 @@ class PlaylistSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "track", ]
 
     def create(self, validated_data):
-        tracks_data = validated_data.pop('track')
-        album = models.Playlist.objects.create(**validated_data)
-        for track_data in tracks_data:
-            models.Track.objects.create(**track_data)
-            models.PlaylistTrack.objects.create(id=get_random_string(10),
-                                                track_id=list(track_data.values())[0],
-                                                playlist_id=validated_data['id'])
-        return album
+        try:
+            tracks_id = []
+            for dance in self.initial_data['track']:
+                if 'id' not in dance:
+                    raise serializers.ValidationError({'track': 'key error'})
+                tracks_id.append(dance['id'])
+
+            newPlaylist = models.Playlist.objects.create(**validated_data)
+            if tracks_id:
+                for track_id in tracks_id:
+                    newPlaylist.track.add(track_id)
+            newPlaylist.save()
+            return newPlaylist
+        except Exception as e:
+            raise serializers.ValidationError({'detail': e})
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('track')
